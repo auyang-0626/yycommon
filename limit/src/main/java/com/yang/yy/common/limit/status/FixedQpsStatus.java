@@ -1,9 +1,11 @@
 package com.yang.yy.common.limit.status;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+@Slf4j
 @Data
 public class FixedQpsStatus {
 
@@ -21,7 +23,6 @@ public class FixedQpsStatus {
             timestamp = currTimestamp;
             acquireCount.set(0);
         }
-
         return acquireCount.incrementAndGet();
     }
 }
