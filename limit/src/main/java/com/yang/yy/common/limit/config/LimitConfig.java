@@ -13,13 +13,13 @@ public class LimitConfig {
 
     private Long timeWindow = 1000L; //毫秒
 
-    private Long limit = -1L;
+    private Long capacity = -1L;
 
-    public enum LimitType {
-        QPS, QPS_CLUSTER, TPS, TPS_CLUSTER
-    }
-
-    public enum LimitAlgorithm {
-        FIXED_TIME, FLOW_TIME, TOKEN_BOCKET, LEAKY_BOCKET
+    public LimitConfig(LimitType limitType, LimitAlgorithm limitAlgorithm, String resource, Long timeWindow, Long capacity) {
+        this.limitType = limitType;
+        this.limitAlgorithm = limitAlgorithm;
+        this.resource = resource;
+        this.timeWindow = timeWindow;
+        this.capacity = capacity;
     }
 }
