@@ -37,7 +37,7 @@ public class LimitFacade {
      * @param resource 限流的资源唯一限定符
      * @return
      */
-    public boolean acquirIgnoreException(String resource) {
+    public boolean acquireIgnoreException(String resource) {
         try {
             return acquire(resource);
         } catch (ResourceNotExistExecption | ConfigInValidExecption  e) {
@@ -58,10 +58,12 @@ public class LimitFacade {
 
         // 固定时间窗口的限流
         if (limitConfig.getLimitAlgorithm() == LimitAlgorithm.FIXED_TIME){
-            long currCapacity = fixedQpsRecordMap.computeIfAbsent(limitConfig.getResource(),o->new FixedQpsStatus()).incrementAndGet(limitConfig.getTimeWindow());
+            long currCapacity = fixedQpsRecordMap
+                    .computeIfAbsent(limitConfig.getResource(),o->new FixedQpsStatus())
+                    .incrementAndGet(limitConfig.getTimeWindow());
 
-            log.info("{}-->{}",limitConfig.getResource(),currCapacity);
-            return limitConfig.getCapacity() > currCapacity;
+           // log.info("{}-->{}",limitConfig.getResource(),currCapacity);
+            return limitConfig.getCapacity() >= currCapacity;
         }
         return false;
     }
