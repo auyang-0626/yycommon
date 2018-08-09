@@ -11,15 +11,14 @@
                boolean acquire = limitFacade.acquireIgnoreException("test-resource",10000);
                
                配置信息：
-                    @Bean
-                    public LimitFacade getLimitFacade(){
-                        LimitFacade limitFacade = new LimitFacade();
-                        // 令牌桶限流
-                        limitFacade.limitConfigMap.put("test-resource",new LimitConfig(LimitType.QPS,LimitAlgorithm.TOKEN_BUCKET,"test-resource",1000L,100L,1000));
-                        // 时间窗口限流
-                        limitFacade.limitConfigMap.put("user-resource",new LimitConfig(LimitType.QPS,LimitAlgorithm.FIXED_TIME,"user-resource",1000L,20L,1000));
-                        return limitFacade;
-                    }
+                     @Bean
+                       public LimitFacade getLimitFacade(){
+                           LimitFacade limitFacade = new LimitFacade();
+                           //   参数含义  QPS限流，令牌桶算法，资源，限流窗口，限流窗口内最多允许通过的流量
+                           limitFacade.limitConfigMap.put("test-resource",new LimitConfig(LimitType.QPS,LimitAlgorithm.TOKEN_BUCKET,"test-resource",1000L,100L));
+                           limitFacade.limitConfigMap.put("user-resource",new LimitConfig(LimitType.QPS,LimitAlgorithm.FIXED_TIME,"user-resource",1000L,20L));
+                           return limitFacade;
+                       }
                扩展：
                   a. 可以把配置做成注解
                   b. 也可以坐在filter里面，自动拦截url,配合配置中心动态调整限流

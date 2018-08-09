@@ -19,19 +19,17 @@ public class LimitConfig {
 
     private Long capacity = -1L;
 
-    private Integer maxWaitThread;//最多等待线程数
-
     // todo AtomicReference 使用这个修饰可以去掉同步吗 ？
     private Status status;
 
 
-    public LimitConfig(LimitType limitType, LimitAlgorithm limitAlgorithm, String resource, Long timeWindow, Long capacity, Integer maxWaitThread) {
+    public LimitConfig(LimitType limitType, LimitAlgorithm limitAlgorithm, String resource, Long timeWindow, Long capacity) {
         this.limitType = limitType;
         this.limitAlgorithm = limitAlgorithm;
         this.resource = resource;
         this.timeWindow = timeWindow;
         this.capacity = capacity;
-        this.maxWaitThread = maxWaitThread;
+
     }
 
     //阻塞等待时间，等于0 不阻塞，小于0无限阻塞，大于零标识阻塞时间，单位毫秒
