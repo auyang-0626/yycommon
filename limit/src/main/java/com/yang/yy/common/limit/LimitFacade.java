@@ -1,10 +1,8 @@
 package com.yang.yy.common.limit;
 
-import com.yang.yy.common.limit.config.LimitAlgorithm;
 import com.yang.yy.common.limit.config.LimitConfig;
 import com.yang.yy.common.limit.exception.ConfigInValidExecption;
 import com.yang.yy.common.limit.exception.ResourceNotExistExecption;
-import com.yang.yy.common.limit.status.FixedQpsStatus;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,20 +14,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LimitFacade {
 
     //资源的限流配置信息 key resource, value config
+    // 每个资源的参数是唯一的
     public  Map<String,LimitConfig> limitConfigMap = new ConcurrentHashMap<>(32);
-    public  Map<String,FixedQpsStatus> fixedQpsRecordMap = new ConcurrentHashMap<>();
 
-    public boolean acquire(String resource) throws ResourceNotExistExecption, ConfigInValidExecption {
+
+
+    public boolean acquire(String resource, long waitTime) throws ResourceNotExistExecption, ConfigInValidExecption {
         LimitConfig limitConfig = limitConfigMap.get(resource);
         if (limitConfig == null ){
             throw new ResourceNotExistExecption("指定的资源不存在！");
         }
-        switch (limitConfig.getLimitType()){
-            case QPS:
-                return qpsLimit(limitConfig);
-            default:
-                throw new ConfigInValidExecption("无效的配置");
-        }
+        return limitConfig.acquire(waitTime);
+
     }
 
     /**
@@ -37,9 +33,9 @@ public class LimitFacade {
      * @param resource 限流的资源唯一限定符
      * @return
      */
-    public boolean acquireIgnoreException(String resource) {
+    public boolean acquireIgnoreException(String resource,long waitTime) {
         try {
-            return acquire(resource);
+            return acquire(resource,waitTime);
         } catch (ResourceNotExistExecption | ConfigInValidExecption  e) {
             // 预期的异常，不用core
             log.error(e.getMessage());
@@ -49,22 +45,8 @@ public class LimitFacade {
         return true;
     }
 
-    /**
-     * 单机QPS请求限流
-     * @param limitConfig 限流的配置
-     * @return
-     */
-    private boolean qpsLimit(LimitConfig limitConfig) {
-
-        // 固定时间窗口的限流
-        if (limitConfig.getLimitAlgorithm() == LimitAlgorithm.FIXED_TIME){
-            long currCapacity = fixedQpsRecordMap
-                    .computeIfAbsent(limitConfig.getResource(),o->new FixedQpsStatus())
-                    .incrementAndGet(limitConfig.getTimeWindow());
-
-           // log.info("{}-->{}",limitConfig.getResource(),currCapacity);
-            return limitConfig.getCapacity() >= currCapacity;
-        }
-        return false;
+    public boolean acquireIgnoreException(String resource) {
+       return acquireIgnoreException(resource,0);
     }
+
 }
