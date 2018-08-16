@@ -9,11 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>limit</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>niodemo</module>
-    </modules>
+    <artifactId>jdkdemo</artifactId>
 
 
 </project>
