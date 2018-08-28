@@ -13,6 +13,7 @@
         <module>limitcheck</module>
         <module>jdkdemo</module>
         <module>niodemo</module>
+        <module>cluster</module>
     </modules>
 
     <properties>
